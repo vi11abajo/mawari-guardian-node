@@ -1,0 +1,44 @@
+# Переменные окружения
+.env
+
+# Данные ноды
+data/
+*.log
+
+# Docker
+docker-compose.override.yml
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+
+# Временные файлы
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Бэкапы
+*.backup
+*.bak
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+
+# Приватные ключи и чувствительные данные
+*.pem
+*.key
+wallet.json
+keystore/

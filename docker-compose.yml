@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  mawari-guardian-node:
+    image: ${MNTESTNET_IMAGE:-ghcr.io/mawari-network/guardian-node:testnet-latest}
+    container_name: mawari-guardian-node
+    restart: unless-stopped
+    environment:
+      - OWNERS_ALLOWLIST=${OWNER_ADDRESS}
+    volumes:
+      - ./data:/app/cache
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    network_mode: host
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "echo", "healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

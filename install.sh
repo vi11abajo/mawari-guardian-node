@@ -151,30 +151,36 @@ configure_env() {
 
     # Проверка переменной окружения или запрос адреса
     if [ -z "$OWNER_ADDRESS" ]; then
-        # Если скрипт запущен через curl | bash, интерактивный ввод не работает
-        if [ -t 0 ]; then
-            # Запрос адреса кошелька владельца (только если stdin это терминал)
-            read -p "Введите адрес вашего кошелька (OWNER_ADDRESS): " owner_address
-        else
-            print_error "Адрес кошелька не указан!"
-            echo ""
-            print_message "Завершите установку вручную:"
-            echo "  cd ~/mawari-guardian-node"
-            echo "  nano .env"
-            echo "  # Замените 0xYourWalletAddressHere на ваш адрес кошелька"
-            echo "  ./start.sh"
-            echo ""
-            return 0
-        fi
+        # Запрос адреса кошелька владельца
+        while true; do
+            read -p "Введите адрес вашего кошелька (OWNER_ADDRESS): " owner_address </dev/tty
+
+            if [ -z "$owner_address" ]; then
+                print_error "Адрес кошелька не может быть пустым!"
+                continue
+            fi
+
+            # Базовая проверка формата (должен начинаться с 0x и быть 42 символа)
+            if [[ ! "$owner_address" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+                print_warning "Адрес должен начинаться с 0x и содержать 40 hex символов"
+                read -p "Продолжить с этим адресом? (y/n): " confirm </dev/tty
+                if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+                    continue
+                fi
+            fi
+
+            break
+        done
     else
         owner_address="$OWNER_ADDRESS"
+        print_message "Используется адрес из переменной окружения: $owner_address"
     fi
 
-    if [ -n "$owner_address" ]; then
-        # Обновление .env файла
-        sed -i "s/OWNER_ADDRESS=.*/OWNER_ADDRESS=$owner_address/" .env
-        print_message "Переменные окружения настроены"
-    fi
+    # Обновление .env файла
+    sed -i "s/OWNER_ADDRESS=.*/OWNER_ADDRESS=$owner_address/" .env
+    print_message "Переменные окружения настроены"
+    echo ""
+    print_message "Адрес кошелька: $owner_address"
 }
 
 # Создание systemd сервиса

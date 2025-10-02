@@ -31,12 +31,6 @@ bash <(curl -fsSL https://raw.githubusercontent.com/vi11abajo/mawari-guardian-no
 
 Скрипт запросит адрес вашего кошелька во время установки.
 
-**Альтернативно, можно указать адрес через переменную окружения:**
-
-```bash
-OWNER_ADDRESS=0xВАШ_АДРЕС_КОШЕЛЬКА bash <(curl -fsSL https://raw.githubusercontent.com/vi11abajo/mawari-guardian-node/main/install.sh)
-```
-
 **После установки выполните:**
 ```bash
 newgrp docker

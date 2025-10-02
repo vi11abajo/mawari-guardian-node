@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   mawari-guardian-node:
-    image: ${MNTESTNET_IMAGE:-ghcr.io/mawari-network/guardian-node:testnet-latest}
+    image: ${MNTESTNET_IMAGE:-us-east4-docker.pkg.dev/mawarinetwork-dev/mwr-net-d-car-uses4-public-docker-registry-e62e/mawari-node:latest}
     container_name: mawari-guardian-node
     restart: unless-stopped
     environment:

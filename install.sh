@@ -233,8 +233,28 @@ main() {
     echo "  Установка завершена успешно!"
     echo "=========================================="
     echo ""
-    print_message "Для завершения установки Docker выполните:"
-    echo "  newgrp docker"
+
+    # Запуск ноды
+    print_message "Запуск Guardian Node..."
+    cd ~/mawari-guardian-node
+
+    # Добавление пользователя в группу docker и запуск ноды
+    if groups $USER | grep -q docker; then
+        # Пользователь уже в группе docker
+        docker-compose up -d
+    else
+        # Запуск через sg для временного применения группы docker
+        sg docker -c "docker-compose up -d"
+    fi
+
+    sleep 3
+
+    echo ""
+    print_message "Нода запущена!"
+    echo ""
+    print_message "Для просмотра логов и получения адреса burner кошелька:"
+    echo "  cd ~/mawari-guardian-node"
+    echo "  ./logs.sh"
     echo ""
     print_message "Для управления нодой используйте:"
     echo "  ./start.sh   - Запустить ноду"
@@ -242,9 +262,10 @@ main() {
     echo "  ./logs.sh    - Посмотреть логи"
     echo "  ./status.sh  - Проверить статус"
     echo ""
-    print_warning "ВАЖНО: Не забудьте:"
-    print_warning "1. Перевести 1 токен MAWARI на адрес burner кошелька"
-    print_warning "2. Делегировать Guardian NFT через Dashboard"
+    print_warning "ВАЖНО: Следующие шаги для активации ноды:"
+    print_warning "1. Посмотрите логи и найдите адрес burner кошелька"
+    print_warning "2. Перевести 1 токен MAWARI на адрес burner кошелька"
+    print_warning "3. Делегировать Guardian NFT через Dashboard"
     echo ""
 }
 

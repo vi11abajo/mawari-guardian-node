@@ -149,18 +149,32 @@ configure_env() {
     echo "=========================================="
     echo ""
 
-    # Запрос адреса кошелька владельца
-    read -p "Введите адрес вашего кошелька (OWNER_ADDRESS): " owner_address
-
-    if [ -z "$owner_address" ]; then
-        print_error "Адрес кошелька не может быть пустым!"
-        exit 1
+    # Проверка переменной окружения или запрос адреса
+    if [ -z "$OWNER_ADDRESS" ]; then
+        # Если скрипт запущен через curl | bash, интерактивный ввод не работает
+        if [ -t 0 ]; then
+            # Запрос адреса кошелька владельца (только если stdin это терминал)
+            read -p "Введите адрес вашего кошелька (OWNER_ADDRESS): " owner_address
+        else
+            print_error "Адрес кошелька не указан!"
+            echo ""
+            print_message "Завершите установку вручную:"
+            echo "  cd ~/mawari-guardian-node"
+            echo "  nano .env"
+            echo "  # Замените 0xYourWalletAddressHere на ваш адрес кошелька"
+            echo "  ./start.sh"
+            echo ""
+            return 0
+        fi
+    else
+        owner_address="$OWNER_ADDRESS"
     fi
 
-    # Обновление .env файла
-    sed -i "s/OWNER_ADDRESS=.*/OWNER_ADDRESS=$owner_address/" .env
-
-    print_message "Переменные окружения настроены"
+    if [ -n "$owner_address" ]; then
+        # Обновление .env файла
+        sed -i "s/OWNER_ADDRESS=.*/OWNER_ADDRESS=$owner_address/" .env
+        print_message "Переменные окружения настроены"
+    fi
 }
 
 # Создание systemd сервиса
